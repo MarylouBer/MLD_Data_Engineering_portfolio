@@ -1,0 +1,102 @@
+from datetime import datetime
+
+today = datetime.now().date()
+end_date = datetime(2026, 1, 1).date()
+
+# initialize a dictionary to store all reservations
+reservations_by_room = {}
+
+# booking can only be made when hotel is open
+hotel_is_open = True
+
+# checks if the arrival & departure date are entered in the correct format
+def get_valid_date(prompt):
+  while True:
+    date_input = input(prompt)
+    try:
+      valid_date = datetime.strptime(date_input, '%Y-%m-%d').date()
+      return valid_date
+    except ValueError:
+      print('Invalid date, please re-enter')
+
+# checks if the room is available for the given dates
+def is_room_available(room, arrival, departure):
+  if room in reservations_by_room:
+    for reservation in reservations_by_room[room]:
+      existing_arrival = reservation['Arrival']
+      existing_departure = reservation['Departure']
+      if not arrival >= existing_departure:
+        return False
+  return True
+
+# collects reservation details
+def reservation(): 
+
+    ## tells what rooms number the hotel has
+    rooms = [1, 2, 3, 4, 5]
+
+    ## collects name
+    name = input("Family name of the guest: ")
+
+    ## checks if dates are entered correctly
+    while True:
+      arrival = get_valid_date("Arrival of the guest (YYYY-MM-DD): ")
+      departure = get_valid_date("Departure of the guest (YYYY-MM-DD: )")
+      
+      if (departure > arrival and
+          arrival >= today and
+          arrival <= end_date and
+          departure <= end_date):
+        break
+      else:
+        print('Error. Arrival date must be < departure date, and arrival + departure dates must be before 2026-01-01. Please re-enter the correct dates')
+   
+    ## checks if room number is correct and available
+    while True:
+      room = int(input("Room given to the guest (1 to 5): "))
+      if room not in rooms:
+        print('Error, please enter valid room number')
+      elif not is_room_available(room, arrival, departure):
+        print('Error, the room is already occupied, please select another room')
+      else:
+          break
+    
+    return {'Room': room, 'Family Name': name, 'Arrival': arrival, 'Departure': departure}
+
+# add a reservation to the appropriate room in the dictionary
+def add_reservation_to_room(reservation):
+  room_number = reservation['Room']
+  if room_number not in reservations_by_room:
+    reservations_by_room[room_number] = []
+  reservations_by_room[room_number].append(reservation)
+
+# checking if we can make bookings
+while hotel_is_open is True:
+
+# adds the first reservation
+  new_reservation = reservation()
+  add_reservation_to_room(new_reservation)
+
+# ask if there is another reservation
+  other_reservation = input("Other guest? (yes/no): ")
+  while other_reservation != 'no':
+    if other_reservation == 'yes':
+      new_reservation = reservation()
+      add_reservation_to_room(new_reservation)
+      other_reservation = input("other guest? (yes/no): ")
+    else:
+      print('Error, please enter yes or no')
+      other_reservation = input("Other guest? (yes/no): ")
+
+# prints out the reservation report (does not include the history of a room, only the newest reservation)
+  print('Reservation report: ')
+  for room in rooms:
+    if room in reservations_by_room:
+      for res in reservations_by_room[room]:
+        print(f"Room {room} has been booked, details of the reservation --> {res}")
+    else:
+      print(f"Room {room} has not been booked yet")
+
+# if hotel is closed, we can't make any booking
+else:
+  print('Hotel is currently closed, no booking can be made')
