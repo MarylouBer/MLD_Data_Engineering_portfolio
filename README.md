@@ -4,4 +4,4 @@ Welcome! This repository contains a collection of projects I've built to practic
 
 My goal with this portfolio is to apply theory to real-world use cases and continue developing hands-on experience across various tools and practices in the data engineering ecosystem.
 
-Feel free to explore each project folder to see detailed documentation, source code, and key learning outcomes.
+Feel free to explore each project folder to see documentation and source code.
