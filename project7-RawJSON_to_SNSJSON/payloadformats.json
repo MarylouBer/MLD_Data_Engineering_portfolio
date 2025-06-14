@@ -1,0 +1,22 @@
+format 1:
+{
+  "entity": "YY",
+  "orderId": xxxxxxxx,
+  "currency": "EUR",
+  "orderDate": "2025/01/01",
+  "orderTime": "0000",
+  "timestamp": "20250101000000000",
+}
+
+
+
+format 2:
+{
+  "entity": "AA",
+  "country_code": "A",
+  "orderNumber": "xxxx-xxxx-xxxx",
+  "currency": "EUR",
+  "orderDate": "2025/01/01",
+  "orderTime": "0000",
+  "timestamp": "20250101000000000",
+}
