@@ -1,4 +1,8 @@
-**AWS Architecture Explanation
+** Assignment instructions as part of the AWS Cloud Technical Essentials course from Coursera
+
+Design a three-tier architecture that follows AWS best practices by using services such as Amazon Virtual Private Cloud (Amazon VPC), Amazon Elastic Compute Cloud (Amazon EC2), Amazon Relational Database Service (Amazon RDS) with high availability, and Elastic Load Balancing (ELB). Create an architecture diagram that lays out your design, including the networking layer, compute layer, database layer, and anything else that’s needed to accurately depict the architecture. Write a few paragraphs that explain why you chose the AWS services that you used and how they would support the solution for the given scenario. Your explanation must describe how traffic flows through the different AWS components—from the client to the backend database, and back to the client.
+
+** AWS Architecture Explanation
 
 For this solution, I implemented a 3-tier architecture in AWS to align with the principles of high availability, fault tolerance, scalability, and security. This architecture separates concerns into the presentation layer, application layer, and database layer, which improves maintainability and security. It is deployed in a single AWS region (Europe) using two Availability Zones (AZs) to ensure redundancy and fault isolation, supporting the Reliability and High Availability principles of cloud architecture design.
 
