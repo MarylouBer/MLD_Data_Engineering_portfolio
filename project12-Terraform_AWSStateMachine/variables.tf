@@ -44,11 +44,7 @@ variable "dead_letter_topic_name" {
 variable "default_tags" {
   type = map(string)
   default = {
-    dh_platform = "finance_systems"
-    dh_tribe    = "finance_systems"
-    dh_app      = "POC_SFN_Orders"
-    dh_cc_id    = "1001010035"
-    dh_squad    = "fs-sap"
+    platform = "fs"
   }
   description = "A map of default tags to apply to all resources for easy identification and cost allocation."
 }
