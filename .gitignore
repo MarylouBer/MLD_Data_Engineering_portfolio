@@ -1,0 +1,13 @@
+# --- OS & System Files ---
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+
+# --- Terraform ---
+.terraform/
+*.tfstate
+*.tfstate.backup
+
+# --- Build Artifacts (From your main.tf) ---
+build/
