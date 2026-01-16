@@ -1,0 +1,64 @@
+{
+    "Comment": "Workflow to Validate Message and Route, including Dead-Letter Topic Handling via SNS",
+    "StartAt": "CheckValidation",
+    "States": {
+        "CheckValidation": {
+            "Type": "Choice",
+            "Choices": [
+                {
+                    "Variable": "$.valid",
+                    "BooleanEquals": true,
+                    "Next": "SendToValidQueue"
+                }
+            ],
+            "Default": "SendToInvalidQueue"
+        },
+        "SendToValidQueue": {
+            "Type": "Task",
+            "Resource": "arn:aws:states:::sqs:sendMessage",
+            "Parameters": {
+                "QueueUrl": "https://sqs.${aws_region}.amazonaws.com/${aws_account_id}/${valid_queue_name}",
+                "MessageBody.$": "$"
+            },
+            "End": true,
+            "Catch": [
+                {
+                    "ErrorEquals": [
+                        "States.ALL"
+                    ],
+                    "ResultPath": "$.errorInfo",
+                    "Next": "PublishToDeadLetterTopic"
+                }
+            ]
+        },
+        "SendToInvalidQueue": {
+            "Type": "Task",
+            "Resource": "arn:aws:states:::sqs:sendMessage",
+            "Parameters": {
+                "QueueUrl": "https://sqs.${aws_region}.amazonaws.com/${aws_account_id}/${invalid_queue_name}",
+                "MessageBody.$": "$"
+            },
+            "End": true,
+            "Catch": [
+                {
+                    "ErrorEquals": [
+                        "States.ALL"
+                    ],
+                    "ResultPath": "$.errorInfo",
+                    "Next": "PublishToDeadLetterTopic"
+                }
+            ]
+        },
+        "PublishToDeadLetterTopic": {
+            "Comment": "Publishes the failed message and error details to an SNS Topic for alerting/retry.",
+            "Type": "Task",
+            "Resource": "arn:aws:states:::sns:publish",
+            "Parameters": {
+                "TopicArn": "arn:aws:sns:${aws_region}:${aws_account_id}:${dead_letter_topic_name}",
+                "Message.$": "States.JsonMerge($, $.errorInfo)",
+                "Subject": "SFN Error: Failed to Send SQS Message"
+            },
+            "End": true
+        }
+    }
+}
