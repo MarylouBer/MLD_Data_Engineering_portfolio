@@ -18,22 +18,21 @@ The pipeline is secured using **OpenID Connect (OIDC)**, eliminating the need fo
 
 ## Repository Structure
 
-MLD_Data_Engineering_portfolio/        <-- ROOT of Repository
-│
-├── .github/                           
+```text
+MLD_Data_Engineering_portfolio/          <-- ROOT of Repository
+├── .github/
 │   └── workflows/
-│       └── terraform.yml              
+│       └── terraform.yml                <-- The CI/CD Automation
 │
-├── project14-IaC_CICD_GithubActions/  <-- Project Subfolder
-   ├── backend.tf
-   ├── main.tf
-   ├── providers.tf
-   ├── variables.tf
-   ├── .gitignore                     
-   │
-   └── bootstrap/                     
-       ├── bootstrap.tf
-       ├── outputs.tf
-       ├── providers.tf
-       ├── variables.tf
+└── project14-IaC_CICD_GithubActions/    <-- Project Source Code
+    ├── backend.tf
+    ├── main.tf
+    ├── providers.tf
+    ├── variables.tf
+    ├── .gitignore
+    └── bootstrap/                       <-- Setup files (Run manually once)
+        ├── bootstrap.tf
+        ├── outputs.tf
+        └── providers.tf
+        └── variables.tf
 
