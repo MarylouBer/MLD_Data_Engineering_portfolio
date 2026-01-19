@@ -10,6 +10,6 @@ terraform {
 }
 
 provider "aws" {
-  region  = var.aws_region
-  profile = "private"
+  region = var.aws_region
+  #profile = "private"
 }
