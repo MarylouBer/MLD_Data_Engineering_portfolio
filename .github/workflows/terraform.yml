@@ -19,6 +19,7 @@ jobs:
     defaults:
       run:
         shell: bash
+        working-directory: "./project14-IaC _CICD_GithubActions"
 
     steps:
       # 1. Checkout the code
