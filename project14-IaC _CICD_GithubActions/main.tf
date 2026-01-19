@@ -38,3 +38,9 @@ data "aws_iam_policy_document" "sqs_policy_doc" {
 resource "aws_sqs_queue" "test_queue" {
   name = "z-dh-gmlp-sqs-eu-north-1-test-queue"
 }
+
+
+# --- NEW TEST QUEUE 2 ---
+resource "aws_sqs_queue" "test_queue" {
+  name = "z-dh-gmlp-sqs-eu-north-1-test-queue2"
+}
