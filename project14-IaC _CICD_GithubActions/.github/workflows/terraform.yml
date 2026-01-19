@@ -1,0 +1,96 @@
+name: "Terraform Infrastructure"
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+  pull_request:
+
+permissions:
+  contents: read
+  pull-requests: write
+  id-token: write # REQUIRED: This allows OIDC authentication
+
+jobs:
+  terraform:
+    name: "Terraform"
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      # 1. Checkout the code
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 2. Log into AWS using OIDC (No secret keys needed!)
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          # 🔴 REPLACE THIS WITH YOUR REAL ARN FROM BOOTSTRAP OUTPUT
+          role-to-assume: arn:aws:iam::302862750751:role/GitHubActionsTerraformRole
+          aws-region: eu-north-1
+
+      # 3. Install Terraform
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      # 4. Initialize Terraform (Connect to S3)
+      - name: Terraform Init
+        id: init
+        run: terraform init
+
+      # 5. Check Code Style
+      - name: Terraform Format
+        id: fmt
+        run: terraform fmt -check
+
+      # 6. Terraform Plan (Runs on Pull Requests)
+      - name: Terraform Plan
+        id: plan
+        if: github.event_name == 'pull_request'
+        # -no-color ensures the GitHub comment looks clean
+        run: terraform plan -no-color -input=false
+        continue-on-error: true
+
+      # 7. Post the Plan as a Comment (The "Showcase" Feature)
+      - name: Update PR with Plan
+        uses: actions/github-script@v6
+        if: github.event_name == 'pull_request'
+        env:
+          PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
+            #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
+            #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
+
+            <details><summary>Show Plan</summary>
+
+            \`\`\`\n
+            ${process.env.PLAN}
+            \`\`\`
+
+            </details>
+
+            *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            })
+
+      # 8. Fail if Plan failed
+      - name: Terraform Plan Status
+        if: steps.plan.outcome == 'failure'
+        run: exit 1
+
+      # 9. Terraform Apply (Runs on Merge to dev or main)
+      - name: Terraform Apply
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev')
+        run: terraform apply -auto-approve -input=false

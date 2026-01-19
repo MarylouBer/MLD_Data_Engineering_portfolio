@@ -1,0 +1,16 @@
+
+# Block the heavy binary files
+.terraform/
+
+# --- State Files (CRITICAL) ---
+# Ignore state files in root and bootstrap.
+# Never commit these!
+*.tfstate
+*.tfstate.*
+
+# --- OS & IDE Junk (Optional but recommended) ---
+.DS_Store
+
+# --- Secrets & Vars ---
+*.tfvars
+*.tfvars.json
