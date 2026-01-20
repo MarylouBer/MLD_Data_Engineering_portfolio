@@ -1,9 +1,8 @@
 terraform {
   backend "s3" {
-    bucket = "terraform-githubtest-tfstatefile-bucket-mld01"
-    key    = "global/sqs/terraform.tfstate" # I updated path to reflect it's an SQS project
-    region = "eu-north-1"
-    #profile      = "private"
+    bucket       = "terraform-githubtest-tfstatefile-bucket-mld01"
+    key          = "global/sqs/terraform.tfstate"
+    region       = "eu-north-1"
     encrypt      = true
     use_lockfile = true
   }
