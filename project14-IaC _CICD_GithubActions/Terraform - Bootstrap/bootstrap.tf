@@ -26,7 +26,6 @@ resource "aws_s3_bucket" "ml_githubtest_tfstatefile_bucket" {
 }
 
 resource "aws_s3_bucket_versioning" "versioning_mld_githubtest_tfstatefile_bucket" {
-  # 2. UPDATED LINK: Now points to the new resource name
   bucket = aws_s3_bucket.ml_githubtest_tfstatefile_bucket.id
   versioning_configuration {
     status = "Enabled"
