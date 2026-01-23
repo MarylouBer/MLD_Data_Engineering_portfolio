@@ -1,8 +1,10 @@
-# --- OIDC BOOTSTRAP COMPONENTS ---
 # This project is designed to be run manually ONCE to create the backend resources
 # and the OIDC IAM role that your GitHub Action will assume.
 
+# Required data source to get your AWS Account ID for the OIDC provider ARN
+data "aws_caller_identity" "current" {}
 
+### OIDC ###
 
 # This data block fetches the thumbprint for GitHub's OIDC issuer URL.
 data "tls_certificate" "github_actions_oidc" {
@@ -19,12 +21,15 @@ resource "aws_iam_openid_connect_provider" "github_actions" {
 }
 
 
-# S3 Bucket for Terraform State
+### S3 Bucket for Terraform State ###
+
+# creates bucket to store state files
 resource "aws_s3_bucket" "ml_githubtest_tfstatefile_bucket" {
   bucket = "terraform-githubtest-tfstatefile-bucket-mld01"
   tags   = var.default_tags
 }
 
+# enables versioning
 resource "aws_s3_bucket_versioning" "versioning_mld_githubtest_tfstatefile_bucket" {
   bucket = aws_s3_bucket.ml_githubtest_tfstatefile_bucket.id
   versioning_configuration {
@@ -32,6 +37,7 @@ resource "aws_s3_bucket_versioning" "versioning_mld_githubtest_tfstatefile_bucke
   }
 }
 
+# Enforces privacy policy on the bucket, ensuring no one on the public internet can access the data
 resource "aws_s3_bucket_public_access_block" "mld_githubtest_tfstatefile_bucket" {
   bucket                  = aws_s3_bucket.ml_githubtest_tfstatefile_bucket.id
   block_public_acls       = true
@@ -40,6 +46,8 @@ resource "aws_s3_bucket_public_access_block" "mld_githubtest_tfstatefile_bucket"
   restrict_public_buckets = true
 }
 
+
+### IAM Roles and Policies ###
 
 # IAM Role for GitHub Actions (OIDC)
 resource "aws_iam_role" "github_actions_role" {
@@ -91,11 +99,9 @@ resource "aws_iam_role_policy" "backend_access" {
 }
 
 # This AWS Managed Policy allows full control over SQS, but NOTHING else.
-# The robot cannot create EC2s, delete databases, or touch your billing.
 resource "aws_iam_role_policy_attachment" "github_actions_sqs" {
   role       = aws_iam_role.github_actions_role.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonSQSFullAccess"
 }
 
-# Required data source to get your AWS Account ID for the OIDC provider ARN
-data "aws_caller_identity" "current" {}
+
