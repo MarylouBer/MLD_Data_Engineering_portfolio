@@ -30,18 +30,3 @@ data "aws_iam_policy_document" "sqs_policy_doc" {
     ]
   }
 }
-
-
-###
-
-# --- NEW TEST QUEUE ---
-resource "aws_sqs_queue" "test_queue" {
-  name = "z-dh-gmlp-sqs-eu-north-1-test-queue"
-}
-
-
-# --- NEW TEST QUEUE3 ---
-resource "aws_sqs_queue" "test_queue3" {
-  name = "z-dh-gmlp-sqs-eu-north-1-test-queue3"
-}
-
